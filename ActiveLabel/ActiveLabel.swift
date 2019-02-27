@@ -24,6 +24,8 @@ typealias ElementTuple = (range: NSRange, element: ActiveElement, type: ActiveTy
     open var enabledTypes: [ActiveType] = [.mention, .hashtag, .url]
 
     open var urlMaximumLength: Int?
+
+    open var overridesAttributes = true
     
     open var configureLinkAttribute: ConfigureLinkAttribute?
 
@@ -266,10 +268,16 @@ typealias ElementTuple = (range: NSRange, element: ActiveElement, type: ActiveTy
         if parseText {
             clearActiveElements()
             let newString = parseTextAndExtractActiveElements(mutAttrString)
-            mutAttrString.mutableString.setString(newString)
+
+            if overridesAttributes {
+                mutAttrString.mutableString.setString(newString)
+            }
         }
 
-        addLinkAttribute(mutAttrString)
+        if overridesAttributes {
+            addLinkAttribute(mutAttrString)
+        }
+
         textStorage.setAttributedString(mutAttrString)
         _customizing = true
         text = mutAttrString.string
@@ -375,6 +383,10 @@ typealias ElementTuple = (range: NSRange, element: ActiveElement, type: ActiveTy
     }
 
     fileprivate func updateAttributesWhenSelected(_ isSelected: Bool) {
+        guard overridesAttributes else {
+            return
+        }
+        
         guard let selectedElement = selectedElement else {
             return
         }
