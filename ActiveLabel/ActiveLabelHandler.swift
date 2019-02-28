@@ -38,7 +38,7 @@ class ActiveLabelHandler {
             mentionTapHandler = nil
         case .url:
             urlTapHandler = nil
-        case .custom:
+        case .custom, .customRange:
             customTapHandlers[type] = nil
         }
     }
